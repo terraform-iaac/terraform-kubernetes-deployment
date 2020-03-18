@@ -1,5 +1,5 @@
 variable "name" {}
-variable "namespace" {}
+#variable "namespace" {}
 variable "image" {}
 
 variable "region" {
