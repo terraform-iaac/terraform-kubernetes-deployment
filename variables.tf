@@ -1,7 +1,10 @@
 variable "name" {}
 variable "namespace" {}
 variable "image" {}
-variable "region" {}
+
+variable "region" {
+  default = []
+}
 
 variable "volume_efs" {
   default = []
