@@ -1,7 +1,7 @@
 resource "kubernetes_deployment" "deploy_app" {
   metadata {
     name = var.name
-    #namespace = var.namespace
+    namespace = var.namespace
     annotations = {
       "field.cattle.io/publicEndpoints" = ""
     }
