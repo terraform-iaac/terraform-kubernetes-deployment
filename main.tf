@@ -118,11 +118,4 @@ resource "kubernetes_deployment" "deploy_app" {
       }
     }
   }
-  lifecycle {
-    ignore_changes = [
-      metadata[0].annotations,
-      spec[0].template[0].metadata[0].annotations,
-      spec[0].template[0].spec[0].container[0].security_context
-    ]
-  }
 }
