@@ -72,6 +72,7 @@ resource "kubernetes_deployment" "deploy_app" {
               mount_path = volume_mount.value.mount_path
               sub_path = lookup(volume_mount.value, "sub_path", null)
               name = volume_mount.value.volume_name
+              read_only = lookup(volume_mount.value, "read_only", false)
             }
           }
           tty = "true"
