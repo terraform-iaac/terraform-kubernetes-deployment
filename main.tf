@@ -115,6 +115,18 @@ resource "kubernetes_deployment" "deploy_app" {
             name = volume.value.volume_name
           }
         }
+        dynamic "volume" {
+          for_each = var.volume_gce_disk
+          content {
+            gce_persistent_disk {
+              pd_name = volume.value.gce_disk
+              fs_type = lookup(volume.value, "fs_type", null )
+              partition = lookup(volume.value, "partition", null )
+              read_only = lookup(volume.value, "read_only", null)
+            }
+            name = volume.value.volume_name
+          }
+        }
         restart_policy = var.restart_policy
       }
     }

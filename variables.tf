@@ -19,6 +19,10 @@ variable "volume_config_map" {
   description = "(Optional) The data stored in a ConfigMap object can be referenced in a volume of type configMap and then consumed by containerized applications running in a Pod"
   default = []
 }
+variable "volume_gce_disk" {
+  description = "(Optional) Create volume from google disk to pod"
+  default = []
+}
 variable "volume_mount" {
   description = "(Optional) Mount path from pods to volume"
   default = []
