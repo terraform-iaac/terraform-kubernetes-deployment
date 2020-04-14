@@ -19,6 +19,12 @@ resource "kubernetes_deployment" "deploy_app" {
         }
       }
       spec {
+        dynamic "security_context" {
+          for_each = var.security_context
+          content {
+            fs_group = lookup(security_context.value, "fs_group", null )
+          }
+        }
         service_account_name = var.service_account_name
         automount_service_account_token = var.service_account_token
         container {
@@ -28,7 +34,9 @@ resource "kubernetes_deployment" "deploy_app" {
           dynamic "security_context" {
             for_each = var.security_context
             content {
-              run_as_user = security_context.value.user_id
+              run_as_group = lookup(security_context.value, "group_id", null)
+              run_as_non_root = lookup(security_context.value, "as_non_root", null)
+              run_as_user = lookup(security_context.value, "user_id", null)
             }
           }
           dynamic "env" {
