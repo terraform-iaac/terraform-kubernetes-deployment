@@ -2,6 +2,9 @@ resource "kubernetes_deployment" "deploy_app" {
   metadata {
     name = var.name
     namespace = var.namespace
+    labels = {
+      app = var.name
+    }
   }
   spec {
     min_ready_seconds = var.min_ready_seconds
