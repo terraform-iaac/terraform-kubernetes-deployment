@@ -2,24 +2,17 @@ resource "kubernetes_deployment" "deploy_app" {
   metadata {
     name = var.name
     namespace = var.namespace
-    labels = {
-      app = var.name
-    }
+    labels = local.labels
   }
   spec {
     min_ready_seconds = var.min_ready_seconds
     replicas = var.replicas
     selector {
-      match_labels = {
-        app = var.name
-      }
+      match_labels = local.labels
     }
     template {
       metadata {
-        labels = {
-          app = var.name
-          label = var.custom_label
-        }
+        labels = local.labels
       }
       spec {
         dynamic "security_context" {

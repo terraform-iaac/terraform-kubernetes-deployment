@@ -2,7 +2,8 @@ variable "name" {
   description = "(Required) Deployment name"
 }
 variable "namespace" {
-  description = "(Required) K8S namespace where deploy app"
+  description = "(Optional) K8S namespace where deploy app"
+  default = "default"
 }
 variable "image" {
   description = "(Required) Docker image for app"
@@ -47,7 +48,10 @@ variable "security_context" {
   description = "(Optional) Set startup user_id, when pods start"
   default = []
 }
-variable "custom_label" {
+locals {
+  labels = var.custom_labels == null ? { app = var.name } : var.custom_labels
+}
+variable "custom_labels" {
   description = "(Optional) Add custom label to pods"
   default = null
 }
