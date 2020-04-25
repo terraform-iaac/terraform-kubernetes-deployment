@@ -59,6 +59,9 @@ variable "args" {
   description = "(Optional) Arguments to the entrypoint."
   default = []
 }
+variable "tty" {
+  default = true
+}
 variable "service_account_token" {
   description = "Indicates whether a service account token should be automatically mounted"
   default = null
