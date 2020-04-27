@@ -86,3 +86,15 @@ variable "resources" {
   description = "(Optional) Limit resources by cpu or memory for pods"
   default = []
 }
+variable "liveness_probe" {
+  description = "(Optional) Periodic probe of container liveness. Container will be restarted if the probe fails. Cannot be updated. "
+  default = []
+}
+variable "readiness_probe" {
+  description = "(Optional) Periodic probe of container service readiness. Container will be removed from service endpoints if the probe fails. Cannot be updated. "
+  default = []
+}
+variable "lifecycle_events" {
+  description = "(Optional) Actions that the management system should take in response to container lifecycle events"
+  default = []
+}

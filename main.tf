@@ -75,13 +75,146 @@ resource "kubernetes_deployment" "deploy_app" {
               read_only = lookup(volume_mount.value, "read_only", false)
             }
           }
+          dynamic "liveness_probe" {
+            for_each = var.liveness_probe
+            content {
+              failure_threshold = lookup(liveness_probe.value, "failure_threshold", null)
+              initial_delay_seconds = lookup(liveness_probe.value, "initial_delay_seconds", null)
+              period_seconds = lookup(liveness_probe.value, "period_seconds", null)
+              success_threshold = lookup(liveness_probe.value, "success_threshold", null)
+              timeout_seconds = lookup(liveness_probe.value, "timeout_seconds", null)
+              dynamic "http_get"{
+                for_each = lookup(liveness_probe.value, "http_get", [])
+                content {
+                  path = lookup(http_get.value, "path", null)
+                  port = lookup(http_get.value, "port", null)
+                  scheme = lookup(http_get.value, "scheme", null)
+                  host = lookup(http_get.value, "host", null)
+
+                  dynamic "http_header" {
+                    for_each = lookup(http_get.value, "header_name", [])
+                    content {
+                      name = lookup(http_get.value, "header_name", null)
+                      value = lookup(http_get.value, "header_value", null)
+                    }
+                  }
+                }
+              }
+              dynamic "tcp_socket" {
+                for_each = lookup(liveness_probe.value, "tcp_socket", null) == null ? [] : [{}]
+                content {
+                  port = liveness_probe.value.tcp_socket_port
+                }
+              }
+            }
+          }
+          dynamic "readiness_probe" {
+            for_each = var.readiness_probe
+            content {
+              failure_threshold = lookup(readiness_probe.value, "failure_threshold", null)
+              initial_delay_seconds = lookup(readiness_probe.value, "initial_delay_seconds", null)
+              period_seconds =  lookup(readiness_probe.value, "period_seconds", null)
+              success_threshold = lookup(readiness_probe.value, "success_threshold", null)
+              timeout_seconds = lookup(readiness_probe.value, "timeout_seconds", null)
+              dynamic "http_get"{
+                for_each = lookup(readiness_probe.value, "http_get", [])
+                content {
+                  path = lookup(http_get.value, "path", null)
+                  port = lookup(http_get.value, "port", null)
+                  scheme = lookup(http_get.value, "scheme", null)
+                  host = lookup(http_get.value, "host", null)
+
+                  dynamic "http_header" {
+                    for_each = lookup(http_get.value, "header_name", [])
+                    content {
+                      name = lookup(http_get.value, "header_name", null)
+                      value = lookup(http_get.value, "header_value", null)
+                    }
+                  }
+                }
+              }
+              dynamic "tcp_socket" {
+                for_each = lookup(readiness_probe.value, "tcp_socket", null) == null ? [] : [{}]
+                content {
+                  port = readiness_probe.value.tcp_socket_port
+                }
+              }
+            }
+          }
+          dynamic "lifecycle"{
+            for_each = var.lifecycle_events
+            content {
+              dynamic "pre_stop"{
+                for_each = lookup(lifecycle.value, "pre_stop", [])
+                content {
+                  exec {
+                    command = lookup(pre_stop.value, "exec_command", null)
+                  }
+                  dynamic "http_get"{
+                    for_each = lookup(pre_stop.value, "http_get", [])
+                    content {
+                      path = lookup(http_get.value, "path", null)
+                      port = lookup(http_get.value, "port", null)
+                      scheme = lookup(http_get.value, "scheme", null)
+                      host = lookup(http_get.value, "host", null)
+
+                      dynamic "http_header" {
+                        for_each = lookup(http_get.value, "header_name", [])
+                        content {
+                          name = lookup(http_get.value, "header_name", null)
+                          value = lookup(http_get.value, "header_value", null)
+                        }
+                      }
+                    }
+                  }
+                  dynamic "tcp_socket" {
+                    for_each = lookup(lifecycle.value, "tcp_socket", null) == null ? [] : [{}]
+                    content {
+                      port = lifecycle.value.tcp_socket_port
+                    }
+                  }
+                }
+              }
+              dynamic "post_start"{
+                for_each = lookup(lifecycle.value, "post_start", [])
+                content {
+                  exec {
+                    command = lookup(post_start.value, "exec_command", null)
+                  }
+                  dynamic "http_get"{
+                    for_each = lookup(post_start.value, "http_get", [])
+                    content {
+                      path = lookup(http_get.value, "path", null)
+                      port = lookup(http_get.value, "port", null)
+                      scheme = lookup(http_get.value, "scheme", null)
+                      host = lookup(http_get.value, "host", null)
+
+                      dynamic "http_header" {
+                        for_each = lookup(http_get.value, "header_name", [])
+                        content {
+                          name = lookup(http_get.value, "header_name", null)
+                          value = lookup(http_get.value, "header_value", null)
+                        }
+                      }
+                    }
+                  }
+                  dynamic "tcp_socket" {
+                    for_each = lookup(lifecycle.value, "tcp_socket", null) == null ? [] : [{}]
+                    content {
+                      port = lifecycle.value.tcp_socket_port
+                    }
+                  }
+                }
+              }
+            }
+          }
           tty = var.tty
         }
         dynamic "host_aliases"{
           iterator = hosts
           for_each = var.hosts
           content {
-            hostnames = ["${hosts.value.hostname}"]
+            hostnames = hosts.value.hostname
             ip = hosts.value.ip
           }
         }
