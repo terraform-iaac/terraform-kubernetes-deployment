@@ -31,6 +31,7 @@ resource "kubernetes_deployment" "deploy_app" {
           image = var.image
           name = var.name
           args = var.args
+          command = var.command
           dynamic "env" {
             for_each = var.env
             content {

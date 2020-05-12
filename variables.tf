@@ -69,6 +69,12 @@ variable "args" {
   description = "(Optional) Arguments to the entrypoint."
   default = []
 }
+
+variable "command" {
+  description = " (Optional) Entrypoint array. Not executed within a shell. "
+  default = []
+}
+
 variable "tty" {
   type = bool
   default = true
