@@ -57,9 +57,7 @@ variable "security_context" {
   description = "(Optional) Set startup user_id, when pods start"
   default = []
 }
-locals {
-  labels = var.custom_labels == null ? { app = var.name } : var.custom_labels
-}
+
 variable "custom_labels" {
   description = "(Optional) Add custom label to pods"
   default = null
@@ -89,6 +87,12 @@ variable "service_account_name" {
   description = "(Optional) Is the name of the ServiceAccount to use to run this pod"
   default = null
 }
+
+variable "image_pull_policy" {
+  default = "Never" // Always, Never or empty
+  description = "he default pull policy is IfNotPresent which causes the Kubelet to skip pulling an image if it already exists. If you would like to always force a pull, you can do one of the following"
+}
+
 variable "restart_policy" {
   type = string
   description = "Restart policy for all containers within the pod. One of Always, OnFailure, Never"
