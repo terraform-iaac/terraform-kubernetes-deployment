@@ -54,9 +54,13 @@ resource "kubernetes_deployment" "deploy_app" {
           dynamic "resources" {
             for_each = var.resources
             content {
+              requests {
+                cpu = lookup(resources.value, "request_cpu", null)
+                memory = lookup(resources.value, "request_memory", null)
+              }
               limits {
-                cpu = lookup(resources.value, "cpu", null)
-                memory = lookup(resources.value, "memory", null)
+                cpu = lookup(resources.value, "limit_cpu", null)
+                memory = lookup(resources.value, "limit_memory", null)
               }
             }
           }
