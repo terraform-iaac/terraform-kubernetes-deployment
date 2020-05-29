@@ -30,6 +30,10 @@ variable "volume_gce_disk" {
   description = "(Optional) Create volume from google disk to pod"
   default = []
 }
+variable "volume_aws_disk" {
+  description = "(Optional) Create volume from aws disk to pod"
+  default = []
+}
 variable "volume_mount" {
   description = "(Optional) Mount path from pods to volume"
   default = []
