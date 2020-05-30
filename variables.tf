@@ -17,7 +17,6 @@ variable "volume_nfs" {
   default = []
 }
 variable "volume_host_path" {
-  type = list(object({}))
   description = "(Optional) Attach a file or directory from the host node’s filesystem"
   default = []
 }
