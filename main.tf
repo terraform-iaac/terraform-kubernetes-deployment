@@ -216,6 +216,7 @@ resource "kubernetes_deployment" "deploy_app" {
           }
           tty = var.tty
         }
+        node_selector = var.node_selector
         dynamic "host_aliases"{
           iterator = hosts
           for_each = var.hosts
