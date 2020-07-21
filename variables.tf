@@ -132,3 +132,7 @@ variable "node_selector" {
   type = map(string)
   default = null
 }
+variable "security_context_capabilities" {
+  description = "(Optional) Security context in pod. Only capabilities."
+  default = []
+}

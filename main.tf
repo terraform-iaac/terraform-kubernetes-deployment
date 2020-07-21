@@ -51,6 +51,16 @@ resource "kubernetes_deployment" "deploy_app" {
               }
             }
           }
+          dynamic "security_context" {
+            for_each = var.security_context_capabilities
+            content {
+              allow_privilege_escalation = false
+              capabilities {
+                add = lookup(security_context.value, "add", [] )
+                drop = lookup(security_context.value, "drop", [] )
+              }
+            }
+          }
           dynamic "resources" {
             for_each = var.resources
             content {
