@@ -58,7 +58,7 @@ resource "kubernetes_deployment" "deploy_app" {
               value_from {
                 secret_key_ref {
                   name = env.value.secret_name
-                  key = env.value.key
+                  key = env.value.secret_key
                 }
               }
             }
