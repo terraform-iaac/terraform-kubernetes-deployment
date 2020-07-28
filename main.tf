@@ -51,6 +51,18 @@ resource "kubernetes_deployment" "deploy_app" {
               }
             }
           }
+          dynamic "env" {
+            for_each = var.env_secret
+            content {
+              name = env.value.name
+              value_from {
+                secret_key_ref {
+                  name = env.value.secret_name
+                  key = env.value.key
+                }
+              }
+            }
+          }
           dynamic "security_context" {
             for_each = var.security_context_capabilities
             content {
