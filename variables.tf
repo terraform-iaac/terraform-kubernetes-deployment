@@ -138,6 +138,6 @@ variable "security_context_capabilities" {
 }
 variable "env_secret" {
   description = "(Optional) Get secret keys from k8s and add as environment variables to pods"
-  type = list(object({name = string, secret_name = string, key = string}))
+  type = list(object({name = string, secret_name = string, secret_key = string}))
   default = []
 }
