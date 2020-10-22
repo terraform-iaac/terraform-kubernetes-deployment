@@ -139,3 +139,7 @@ variable "env_secret" {
   type        = list(object({name = string, secret_name = string, secret_key = string}))
   default     = []
 }
+variable "strategy_update" {
+  description = "(Optional) Type of deployment. Can be 'Recreate' or 'RollingUpdate'"
+  default = "RollingUpdate"
+}
