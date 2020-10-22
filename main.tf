@@ -8,6 +8,11 @@ resource "kubernetes_deployment" "deploy_app" {
   spec {
     min_ready_seconds = var.min_ready_seconds
     replicas          = var.replicas
+
+    strategy {
+      type = var.strategy_update
+    }
+
     selector {
       match_labels = local.labels
     }
