@@ -357,4 +357,6 @@ resource "kubernetes_deployment" "deploy_app" {
       }
     }
   }
+
+  wait_for_rollout = var.wait_for_rollout
 }
