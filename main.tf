@@ -358,10 +358,4 @@ resource "kubernetes_deployment" "deploy_app" {
     }
   }
   wait_for_rollout = var.wait_for_rollout
-  
-  lifecycle {
-    ignore_changes = [
-      spec[0].template[0].spec[0].container[0].image
-    ]
-  }
 }
