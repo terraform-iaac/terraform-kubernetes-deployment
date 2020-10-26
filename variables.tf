@@ -143,3 +143,6 @@ variable "strategy_update" {
   description = "(Optional) Type of deployment. Can be 'Recreate' or 'RollingUpdate'"
   default = "RollingUpdate"
 }
+variable "wait_for_rollout" {
+  default = true
+}
