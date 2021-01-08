@@ -133,6 +133,14 @@ resource "kubernetes_deployment" "deploy_app" {
               success_threshold     = lookup(liveness_probe.value, "success_threshold", null)
               timeout_seconds       = lookup(liveness_probe.value, "timeout_seconds", null)
 
+              dynamic "exec" {
+                for_each = lookup(liveness_probe.value, "exec", [])
+
+                content {
+                  command = exec.value
+                }
+              }
+
               dynamic "http_get"{
                 for_each = lookup(liveness_probe.value, "http_get", [])
                 content {
