@@ -94,13 +94,19 @@ resource "kubernetes_deployment" "deploy_app" {
           dynamic "resources" {
             for_each = var.resources
             content {
-              requests {
-                cpu    = lookup(resources.value, "request_cpu", null)
-                memory = lookup(resources.value, "request_memory", null)
+              dynamic "requests" {
+                for_each = lookup(resources.value, "request_cpu", false) == false ? lookup(resources.value, "request_memory", false) == false ? [] : var.resources : var.resources
+                content {
+                  cpu    = lookup(resources.value, "request_cpu", null)
+                  memory = lookup(resources.value, "request_memory", null)
+                }
               }
-              limits {
-                cpu    = lookup(resources.value, "limit_cpu", null)
-                memory = lookup(resources.value, "limit_memory", null)
+              dynamic "limits" {
+                for_each = lookup(resources.value, "limit_cpu", false) == false ? lookup(resources.value, "limit_memory", false) == false ? [] : var.resources : var.resources
+                content {
+                  cpu    = lookup(resources.value, "limit_cpu", null)
+                  memory = lookup(resources.value, "limit_memory", null)
+                }
               }
             }
           }
@@ -132,6 +138,14 @@ resource "kubernetes_deployment" "deploy_app" {
               period_seconds        = lookup(liveness_probe.value, "period_seconds", null)
               success_threshold     = lookup(liveness_probe.value, "success_threshold", null)
               timeout_seconds       = lookup(liveness_probe.value, "timeout_seconds", null)
+
+              dynamic "exec" {
+                for_each = lookup(liveness_probe.value, "exec", [])
+
+                content {
+                  command = exec.value
+                }
+              }
 
               dynamic "http_get"{
                 for_each = lookup(liveness_probe.value, "http_get", [])
@@ -169,6 +183,14 @@ resource "kubernetes_deployment" "deploy_app" {
               period_seconds        =  lookup(readiness_probe.value, "period_seconds", null)
               success_threshold     = lookup(readiness_probe.value, "success_threshold", null)
               timeout_seconds       = lookup(readiness_probe.value, "timeout_seconds", null)
+
+              dynamic "exec" {
+                for_each = lookup(readiness_probe.value, "exec", [])
+
+                content {
+                  command = exec.value
+                }
+              }
 
               dynamic "http_get"{
                 for_each = lookup(readiness_probe.value, "http_get", [])
@@ -358,10 +380,4 @@ resource "kubernetes_deployment" "deploy_app" {
     }
   }
   wait_for_rollout = var.wait_for_rollout
-  
-  lifecycle {
-    ignore_changes = [
-      spec[0].template[0].spec[0].container[0].image
-    ]
-  }
 }
