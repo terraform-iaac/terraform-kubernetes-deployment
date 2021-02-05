@@ -19,18 +19,18 @@ variable "ports" {
   ]
 }
 
-variable "volume-data" {
+variable "volume_data" {
   default = "data"
 }
 
-variable "volume-logs" {
-  default = "logs_from_node"
+variable "volume_logs" {
+  default = "logs-from-node"
 }
 
-variable "volume-tmp" {
+variable "volume_tmp" {
   default = "tmp-from-node"
 }
 
-variable "volume-config" {
+variable "volume_config" {
   default = "jenkins-configmap"
 }

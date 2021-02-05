@@ -1,4 +1,6 @@
 resource "kubernetes_deployment" "deploy_app" {
+  wait_for_rollout = var.wait_for_rollout
+
   metadata {
     name      = var.name
     namespace = var.namespace
@@ -18,12 +20,86 @@ resource "kubernetes_deployment" "deploy_app" {
     }
 
     template {
-
       metadata {
         labels = local.labels
       }
 
       spec {
+
+        service_account_name            = var.service_account_name
+        automount_service_account_token = var.service_account_token
+
+        restart_policy = var.restart_policy
+
+        node_selector = var.node_selector
+
+        dynamic "host_aliases"{
+          iterator = hosts
+          for_each = var.hosts
+          content {
+            hostnames = hosts.value.hostname
+            ip        = hosts.value.ip
+          }
+        }
+
+        dynamic "volume" {
+          for_each   = var.volume_nfs
+          content {
+            nfs {
+              path   = volume.value.path_on_nfs
+              server = volume.value.nfs_endpoint
+            }
+            name     = volume.value.volume_name
+          }
+        }
+
+        dynamic "volume" {
+          for_each = var.volume_host_path
+          content {
+            host_path {
+              path = volume.value.path_on_node
+              type = lookup(volume.value, "type", null )
+            }
+            name   = volume.value.volume_name
+          }
+        }
+
+        dynamic "volume" {
+          for_each         = var.volume_config_map
+          content {
+            config_map {
+              default_mode = volume.value.mode
+              name         = volume.value.name
+            }
+            name           = volume.value.volume_name
+          }
+        }
+
+        dynamic "volume" {
+          for_each      = var.volume_gce_disk
+          content {
+            gce_persistent_disk {
+              pd_name   = volume.value.gce_disk
+              fs_type   = lookup(volume.value, "fs_type", null )
+              partition = lookup(volume.value, "partition", null )
+              read_only = lookup(volume.value, "read_only", null)
+            }
+            name        = volume.value.volume_name
+          }
+        }
+
+        dynamic "volume" {
+          for_each      = var.volume_aws_disk
+          content {
+            aws_elastic_block_store {
+              fs_type   = lookup(volume.value, "fs_type", null )
+              partition = lookup(volume.value, "partition", null )
+              read_only = lookup(volume.value, "read_only", null)
+              volume_id = volume.value.volume_id
+            }
+            name        = volume.value.volume_name
+          }
+        }
 
         dynamic "security_context" {
           for_each = var.security_context
@@ -36,16 +112,12 @@ resource "kubernetes_deployment" "deploy_app" {
           }
         }
 
-        service_account_name            = var.service_account_name
-        automount_service_account_token = var.service_account_token
-
         container {
-
-          image             = var.image
           name              = var.name
+          image             = var.image
+          image_pull_policy = var.image_pull_policy
           args              = var.args
           command           = var.command
-          image_pull_policy = var.image_pull_policy
 
           dynamic "env" {
             for_each = var.env
@@ -76,17 +148,6 @@ resource "kubernetes_deployment" "deploy_app" {
                   name = env.value.secret_name
                   key  = env.value.secret_key
                 }
-              }
-            }
-          }
-
-          dynamic "security_context" {
-            for_each = var.security_context_capabilities
-            content {
-              allow_privilege_escalation = false
-              capabilities {
-                add  = lookup(security_context.value, "add", [] )
-                drop = lookup(security_context.value, "drop", [] )
               }
             }
           }
@@ -127,6 +188,17 @@ resource "kubernetes_deployment" "deploy_app" {
               sub_path   = lookup(volume_mount.value, "sub_path", null)
               name       = volume_mount.value.volume_name
               read_only  = lookup(volume_mount.value, "read_only", false)
+            }
+          }
+
+          dynamic "security_context" {
+            for_each = var.security_context_capabilities
+            content {
+              allow_privilege_escalation = false
+              capabilities {
+                add  = lookup(security_context.value, "add", [] )
+                drop = lookup(security_context.value, "drop", [] )
+              }
             }
           }
 
@@ -304,80 +376,7 @@ resource "kubernetes_deployment" "deploy_app" {
 
           tty = var.tty
         }
-
-        node_selector = var.node_selector
-        dynamic "host_aliases"{
-          iterator = hosts
-          for_each = var.hosts
-          content {
-            hostnames = hosts.value.hostname
-            ip        = hosts.value.ip
-          }
-        }
-
-        dynamic "volume" {
-          for_each   = var.volume_nfs
-          content {
-            nfs {
-              path   = volume.value.path_on_nfs
-              server = volume.value.nfs_endpoint
-            }
-            name     = volume.value.volume_name
-          }
-        }
-
-        dynamic "volume" {
-          for_each = var.volume_host_path
-          content {
-            host_path {
-              path = volume.value.path_on_node
-              type = lookup(volume.value, "type", null )
-            }
-            name   = volume.value.volume_name
-          }
-        }
-
-        dynamic "volume" {
-          for_each         = var.volume_config_map
-          content {
-            config_map {
-              default_mode = volume.value.mode
-              name         = volume.value.name
-            }
-            name           = volume.value.volume_name
-          }
-        }
-
-        dynamic "volume" {
-          for_each      = var.volume_gce_disk
-          content {
-            gce_persistent_disk {
-              pd_name   = volume.value.gce_disk
-              fs_type   = lookup(volume.value, "fs_type", null )
-              partition = lookup(volume.value, "partition", null )
-              read_only = lookup(volume.value, "read_only", null)
-            }
-            name        = volume.value.volume_name
-          }
-        }
-
-        dynamic "volume" {
-          for_each      = var.volume_aws_disk
-          content {
-            aws_elastic_block_store {
-              fs_type   = lookup(volume.value, "fs_type", null )
-              partition = lookup(volume.value, "partition", null )
-              read_only = lookup(volume.value, "read_only", null)
-              volume_id = volume.value.volume_id
-            }
-            name        = volume.value.volume_name
-          }
-        }
-
-        restart_policy = var.restart_policy
-
       }
     }
   }
-  wait_for_rollout = var.wait_for_rollout
 }

@@ -1,23 +1,64 @@
 variable "name" {
   type        = string
-  description = "(Required) Deployment name"
+  description = "(Required) Name of the deployment"
 }
 variable "namespace" {
   type        = string
-  description = "(Optional) K8S namespace where deploy app"
+  description = "(Optional) Namespace in which to create the deployment"
   default     = "default"
 }
 variable "image" {
   type        = string
-  description = "(Required) Docker image for app"
+  description = "(Required) Docker image name"
+}
+variable "image_pull_policy" {
+  default     = "IfNotPresent"
+  description = "One of Always, Never, IfNotPresent"
+}
+variable "args" {
+  type        = list(string)
+  description = "(Optional) Arguments to the entrypoint"
+  default     = []
+}
+variable "command" {
+  type        = list(string)
+  description = " (Optional) Entrypoint array. Not executed within a shell"
+  default     = []
+}
+variable "env" {
+  type        = list(object({name = string, value = string}))
+  description = "(Optional) Name and value pairs to set in the container's environment"
+  default     = []
+}
+variable "env_field" {
+  type        = list(object({name = string, field_path = string}))
+  description = "(Optional) Get field from k8s and add as environment variables to pods"
+  default     = []
+}
+variable "env_secret" {
+  description = "(Optional) Get secret keys from k8s and add as environment variables to pods"
+  type        = list(object({name = string, secret_name = string, secret_key = string}))
+  default     = []
+}
+variable "resources" {
+  description = "(Optional) Compute Resources required by this container. CPU/RAM requests/limits"
+  default     = []
+}
+variable "internal_port" {
+  description = "(Optional) List of ports to expose from the container"
+  default     = []
+}
+variable "volume_mount" {
+  description = "(Optional) Mount path from pods to volume"
+  default     = []
 }
 variable "volume_nfs" {
   type        = list(object({path_on_nfs = string, nfs_endpoint = string, volume_name = string}))
-  description = "(Optional) Attach NFS"
+  description = "(Optional) Represents an NFS mounts on the host"
   default     = []
 }
 variable "volume_host_path" {
-  description = "(Optional) Attach a file or directory from the host node’s filesystem"
+  description = "(Optional) Represents a directory from node on the host"
   default     = []
 }
 variable "volume_config_map" {
@@ -26,25 +67,11 @@ variable "volume_config_map" {
   default     = []
 }
 variable "volume_gce_disk" {
-  description = "(Optional) Create volume from google disk to pod"
+  description = "(Optional) Represents an GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod"
   default     = []
 }
 variable "volume_aws_disk" {
-  description = "(Optional) Create volume from aws disk to pod"
-  default     = []
-}
-variable "volume_mount" {
-  description = "(Optional) Mount path from pods to volume"
-  default     = []
-}
-variable "env" {
-  type        = list(object({name = string, value = string}))
-  description = "(Optional) Add environment variables to pods."
-  default     = []
-}
-variable "env_field" {
-  type        = list(object({name = string, field_path = string}))
-  description = "(Optional) Get field from k8s and add as environment variables to pods"
+  description = "(Optional) Represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod"
   default     = []
 }
 variable "hosts" {
@@ -52,30 +79,14 @@ variable "hosts" {
   description = "(Optional) Add /etc/hosts records to pods"
   default     = []
 }
-variable "internal_port" {
-  description = "(Optional) Expose port in pods"
-  default     = []
-}
 variable "security_context" {
   description = "(Optional) Set startup user_id, when pods start"
   default     = []
 }
-
 variable "custom_labels" {
   description = "(Optional) Add custom label to pods"
   default     = null
 }
-variable "args" {
-  type        = list(string)
-  description = "(Optional) Arguments to the entrypoint."
-  default     = []
-}
-
-variable "command" {
-  description = " (Optional) Entrypoint array. Not executed within a shell. "
-  default     = []
-}
-
 variable "tty" {
   type        = bool
   default     = true
@@ -90,10 +101,6 @@ variable "service_account_name" {
   description = "(Optional) Is the name of the ServiceAccount to use to run this pod"
   default     = null
 }
-variable "image_pull_policy" {
-  default     = "IfNotPresent" // Always, Never or empty
-  description = "he default pull policy is IfNotPresent which causes the Kubelet to skip pulling an image if it already exists. If you would like to always force a pull, you can do one of the following"
-}
 variable "restart_policy" {
   type        = string
   description = "Restart policy for all containers within the pod. One of Always, OnFailure, Never"
@@ -106,12 +113,8 @@ variable "replicas" {
 }
 variable "min_ready_seconds" {
   type        = number
-  description = "(Optional) Field that specifies the minimum number of seconds for which a newly created Pod should be ready without any of its containers crashing, for it to be considered available  "
+  description = "(Optional) Field that specifies the minimum number of seconds for which a newly created Pod should be ready without any of its containers crashing, for it to be considered available"
   default     = null
-}
-variable "resources" {
-  description = "(Optional) Limit resources by cpu or memory for pods"
-  default     = []
 }
 variable "liveness_probe" {
   description = "(Optional) Periodic probe of container liveness. Container will be restarted if the probe fails. Cannot be updated. "
@@ -132,11 +135,6 @@ variable "node_selector" {
 }
 variable "security_context_capabilities" {
   description = "(Optional) Security context in pod. Only capabilities."
-  default     = []
-}
-variable "env_secret" {
-  description = "(Optional) Get secret keys from k8s and add as environment variables to pods"
-  type        = list(object({name = string, secret_name = string, secret_key = string}))
   default     = []
 }
 variable "strategy_update" {
