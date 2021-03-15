@@ -104,11 +104,10 @@ resource "kubernetes_deployment" "deploy_app" {
         dynamic "security_context" {
           for_each = var.security_context
           content {
-            fs_group        = lookup(security_context.value, "fs_group", null )
-            run_as_group    = lookup(security_context.value, "group_id", null)
-            run_as_user     = lookup(security_context.value, "user_id", null)
-            run_as_non_root = lookup(security_context.value, "as_non_root", null)
-
+            fs_group        = lookup(security_context.value, "fs_group", null)
+            run_as_group    = lookup(security_context.value, "run_as_group", null)
+            run_as_user     = lookup(security_context.value, "run_as_user", null)
+            run_as_non_root = lookup(security_context.value, "run_as_non_root", null)
           }
         }
 
