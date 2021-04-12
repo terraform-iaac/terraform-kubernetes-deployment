@@ -42,7 +42,7 @@ variable "env_secret" {
 }
 variable "resources" {
   description = "(Optional) Compute Resources required by this container. CPU/RAM requests/limits"
-  default     = []
+  default     = {}
 }
 variable "internal_port" {
   description = "(Optional) List of ports to expose from the container"
