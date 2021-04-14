@@ -75,7 +75,7 @@ variable "volume_aws_disk" {
   default     = []
 }
 variable "hosts" {
-  type        = list(object({hostname = string, ip = string}))
+  type        = list(object({hostname = list(string), ip = string}))
   description = "(Optional) Add /etc/hosts records to pods"
   default     = []
 }
