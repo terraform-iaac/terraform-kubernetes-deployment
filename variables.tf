@@ -26,18 +26,18 @@ variable "command" {
   default     = []
 }
 variable "env" {
-  type        = list(object({name = string, value = string}))
+  type        = list(object({ name = string, value = string }))
   description = "(Optional) Name and value pairs to set in the container's environment"
   default     = []
 }
 variable "env_field" {
-  type        = list(object({name = string, field_path = string}))
+  type        = list(object({ name = string, field_path = string }))
   description = "(Optional) Get field from k8s and add as environment variables to pods"
   default     = []
 }
 variable "env_secret" {
   description = "(Optional) Get secret keys from k8s and add as environment variables to pods"
-  type        = list(object({name = string, secret_name = string, secret_key = string}))
+  type        = list(object({ name = string, secret_name = string, secret_key = string }))
   default     = []
 }
 variable "resources" {
@@ -53,7 +53,7 @@ variable "volume_mount" {
   default     = []
 }
 variable "volume_nfs" {
-  type        = list(object({path_on_nfs = string, nfs_endpoint = string, volume_name = string}))
+  type        = list(object({ path_on_nfs = string, nfs_endpoint = string, volume_name = string }))
   description = "(Optional) Represents an NFS mounts on the host"
   default     = []
 }
@@ -62,7 +62,7 @@ variable "volume_host_path" {
   default     = []
 }
 variable "volume_config_map" {
-  type        = list(object({mode = string, name = string, volume_name = string}))
+  type        = list(object({ mode = string, name = string, volume_name = string }))
   description = "(Optional) The data stored in a ConfigMap object can be referenced in a volume of type configMap and then consumed by containerized applications running in a Pod"
   default     = []
 }
@@ -75,7 +75,7 @@ variable "volume_aws_disk" {
   default     = []
 }
 variable "hosts" {
-  type        = list(object({hostname = list(string), ip = string}))
+  type        = list(object({ hostname = list(string), ip = string }))
   description = "(Optional) Add /etc/hosts records to pods"
   default     = []
 }
@@ -88,8 +88,14 @@ variable "custom_labels" {
   default     = null
 }
 variable "tty" {
+  description = "Whether this container should allocate a TTY for itself"
   type        = bool
   default     = true
+}
+variable "termination_grace_period_seconds" {
+  type        = number
+  description = "Duration in seconds the pod needs to terminate gracefully"
+  default     = null
 }
 variable "service_account_token" {
   type        = bool
@@ -139,7 +145,7 @@ variable "security_context_capabilities" {
 }
 variable "strategy_update" {
   description = "(Optional) Type of deployment. Can be 'Recreate' or 'RollingUpdate'"
-  default = "RollingUpdate"
+  default     = "RollingUpdate"
 }
 variable "wait_for_rollout" {
   default = true
