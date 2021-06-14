@@ -91,6 +91,10 @@ variable "tty" {
   type        = bool
   default     = true
 }
+variable "termination_grace_period_seconds" {
+  type    = number
+  default = null
+}
 variable "service_account_token" {
   type        = bool
   description = "Indicates whether a service account token should be automatically mounted"

@@ -25,6 +25,7 @@ resource "kubernetes_deployment" "deploy_app" {
       }
 
       spec {
+        termination_grace_period_seconds = var.termination_grace_period_seconds
 
         service_account_name            = var.service_account_name
         automount_service_account_token = var.service_account_token
