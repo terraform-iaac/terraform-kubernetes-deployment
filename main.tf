@@ -25,6 +25,7 @@ resource "kubernetes_deployment" "deploy_app" {
       }
 
       spec {
+        termination_grace_period_seconds = var.termination_grace_period_seconds
 
         service_account_name            = var.service_account_name
         automount_service_account_token = var.service_account_token
@@ -33,7 +34,7 @@ resource "kubernetes_deployment" "deploy_app" {
 
         node_selector = var.node_selector
 
-        dynamic "host_aliases"{
+        dynamic "host_aliases" {
           iterator = hosts
           for_each = var.hosts
           content {
@@ -43,13 +44,13 @@ resource "kubernetes_deployment" "deploy_app" {
         }
 
         dynamic "volume" {
-          for_each   = var.volume_nfs
+          for_each = var.volume_nfs
           content {
             nfs {
               path   = volume.value.path_on_nfs
               server = volume.value.nfs_endpoint
             }
-            name     = volume.value.volume_name
+            name = volume.value.volume_name
           }
         }
 
@@ -58,46 +59,46 @@ resource "kubernetes_deployment" "deploy_app" {
           content {
             host_path {
               path = volume.value.path_on_node
-              type = lookup(volume.value, "type", null )
+              type = lookup(volume.value, "type", null)
             }
-            name   = volume.value.volume_name
+            name = volume.value.volume_name
           }
         }
 
         dynamic "volume" {
-          for_each         = var.volume_config_map
+          for_each = var.volume_config_map
           content {
             config_map {
               default_mode = volume.value.mode
               name         = volume.value.name
             }
-            name           = volume.value.volume_name
+            name = volume.value.volume_name
           }
         }
 
         dynamic "volume" {
-          for_each      = var.volume_gce_disk
+          for_each = var.volume_gce_disk
           content {
             gce_persistent_disk {
               pd_name   = volume.value.gce_disk
-              fs_type   = lookup(volume.value, "fs_type", null )
-              partition = lookup(volume.value, "partition", null )
+              fs_type   = lookup(volume.value, "fs_type", null)
+              partition = lookup(volume.value, "partition", null)
               read_only = lookup(volume.value, "read_only", null)
             }
-            name        = volume.value.volume_name
+            name = volume.value.volume_name
           }
         }
 
         dynamic "volume" {
-          for_each      = var.volume_aws_disk
+          for_each = var.volume_aws_disk
           content {
             aws_elastic_block_store {
-              fs_type   = lookup(volume.value, "fs_type", null )
-              partition = lookup(volume.value, "partition", null )
+              fs_type   = lookup(volume.value, "fs_type", null)
+              partition = lookup(volume.value, "partition", null)
               read_only = lookup(volume.value, "read_only", null)
               volume_id = volume.value.volume_id
             }
-            name        = volume.value.volume_name
+            name = volume.value.volume_name
           }
         }
 
@@ -121,15 +122,15 @@ resource "kubernetes_deployment" "deploy_app" {
           dynamic "env" {
             for_each = var.env
             content {
-              name   = env.value.name
-              value  = env.value.value
+              name  = env.value.name
+              value = env.value.value
             }
           }
 
           dynamic "env" {
             for_each = var.env_field
             content {
-              name   = env.value.name
+              name = env.value.name
               value_from {
                 field_ref {
                   field_path = env.value.field_path
@@ -141,7 +142,7 @@ resource "kubernetes_deployment" "deploy_app" {
           dynamic "env" {
             for_each = var.env_secret
             content {
-              name   = env.value.name
+              name = env.value.name
               value_from {
                 secret_key_ref {
                   name = env.value.secret_name
@@ -186,8 +187,8 @@ resource "kubernetes_deployment" "deploy_app" {
             content {
               allow_privilege_escalation = false
               capabilities {
-                add  = lookup(security_context.value, "add", [] )
-                drop = lookup(security_context.value, "drop", [] )
+                add  = lookup(security_context.value, "add", [])
+                drop = lookup(security_context.value, "drop", [])
               }
             }
           }
@@ -209,7 +210,7 @@ resource "kubernetes_deployment" "deploy_app" {
                 }
               }
 
-              dynamic "http_get"{
+              dynamic "http_get" {
                 for_each = lookup(liveness_probe.value, "http_get", [])
                 content {
                   path   = lookup(http_get.value, "path", null)
@@ -220,8 +221,8 @@ resource "kubernetes_deployment" "deploy_app" {
                   dynamic "http_header" {
                     for_each = lookup(http_get.value, "http_header", [])
                     content {
-                      name   = lookup(http_header.value, "name", null)
-                      value  = lookup(http_header.value, "value", null)
+                      name  = lookup(http_header.value, "name", null)
+                      value = lookup(http_header.value, "value", null)
                     }
                   }
                 }
@@ -230,7 +231,7 @@ resource "kubernetes_deployment" "deploy_app" {
               dynamic "tcp_socket" {
                 for_each = lookup(liveness_probe.value, "tcp_socket", null) == null ? [] : [{}]
                 content {
-                  port   = liveness_probe.value.tcp_socket_port
+                  port = liveness_probe.value.tcp_socket_port
                 }
               }
 
@@ -242,7 +243,7 @@ resource "kubernetes_deployment" "deploy_app" {
             content {
               failure_threshold     = lookup(readiness_probe.value, "failure_threshold", null)
               initial_delay_seconds = lookup(readiness_probe.value, "initial_delay_seconds", null)
-              period_seconds        =  lookup(readiness_probe.value, "period_seconds", null)
+              period_seconds        = lookup(readiness_probe.value, "period_seconds", null)
               success_threshold     = lookup(readiness_probe.value, "success_threshold", null)
               timeout_seconds       = lookup(readiness_probe.value, "timeout_seconds", null)
 
@@ -254,7 +255,7 @@ resource "kubernetes_deployment" "deploy_app" {
                 }
               }
 
-              dynamic "http_get"{
+              dynamic "http_get" {
                 for_each = lookup(readiness_probe.value, "http_get", [])
                 content {
                   path   = lookup(http_get.value, "path", null)
@@ -265,8 +266,8 @@ resource "kubernetes_deployment" "deploy_app" {
                   dynamic "http_header" {
                     for_each = lookup(http_get.value, "http_header", [])
                     content {
-                      name   = lookup(http_header.value, "name", null)
-                      value  = lookup(http_header.value, "value", null)
+                      name  = lookup(http_header.value, "name", null)
+                      value = lookup(http_header.value, "value", null)
                     }
                   }
 
@@ -276,18 +277,18 @@ resource "kubernetes_deployment" "deploy_app" {
               dynamic "tcp_socket" {
                 for_each = lookup(readiness_probe.value, "tcp_socket", null) == null ? [] : [{}]
                 content {
-                  port   = readiness_probe.value.tcp_socket_port
+                  port = readiness_probe.value.tcp_socket_port
                 }
               }
 
             }
           }
 
-          dynamic "lifecycle"{
+          dynamic "lifecycle" {
             for_each = var.lifecycle_events
             content {
 
-              dynamic "pre_stop"{
+              dynamic "pre_stop" {
                 for_each = lookup(lifecycle.value, "pre_stop", [])
 
                 content {
@@ -295,7 +296,7 @@ resource "kubernetes_deployment" "deploy_app" {
                     command = lookup(pre_stop.value, "exec_command", null)
                   }
 
-                  dynamic "http_get"{
+                  dynamic "http_get" {
                     for_each = lookup(pre_stop.value, "http_get", [])
                     content {
                       path   = lookup(http_get.value, "path", null)
@@ -306,8 +307,8 @@ resource "kubernetes_deployment" "deploy_app" {
                       dynamic "http_header" {
                         for_each = lookup(http_get.value, "http_header", [])
                         content {
-                          name   = lookup(http_header.value, "name", null)
-                          value  = lookup(http_header.value, "value", null)
+                          name  = lookup(http_header.value, "name", null)
+                          value = lookup(http_header.value, "value", null)
                         }
                       }
                     }
@@ -316,14 +317,14 @@ resource "kubernetes_deployment" "deploy_app" {
                   dynamic "tcp_socket" {
                     for_each = lookup(lifecycle.value, "tcp_socket", null) == null ? [] : [{}]
                     content {
-                      port   = lifecycle.value.tcp_socket_port
+                      port = lifecycle.value.tcp_socket_port
                     }
                   }
 
                 }
               }
 
-              dynamic "post_start"{
+              dynamic "post_start" {
                 for_each = lookup(lifecycle.value, "post_start", [])
 
                 content {
@@ -331,7 +332,7 @@ resource "kubernetes_deployment" "deploy_app" {
                     command = lookup(post_start.value, "exec_command", null)
                   }
 
-                  dynamic "http_get"{
+                  dynamic "http_get" {
                     for_each = lookup(post_start.value, "http_get", [])
                     content {
                       path   = lookup(http_get.value, "path", null)
@@ -342,8 +343,8 @@ resource "kubernetes_deployment" "deploy_app" {
                       dynamic "http_header" {
                         for_each = lookup(http_get.value, "http_header", [])
                         content {
-                          name   = lookup(http_header.value, "name", null)
-                          value  = lookup(http_header.value, "value", null)
+                          name  = lookup(http_header.value, "name", null)
+                          value = lookup(http_header.value, "value", null)
                         }
                       }
 
@@ -353,7 +354,7 @@ resource "kubernetes_deployment" "deploy_app" {
                   dynamic "tcp_socket" {
                     for_each = lookup(lifecycle.value, "tcp_socket", null) == null ? [] : [{}]
                     content {
-                      port   = lifecycle.value.tcp_socket_port
+                      port = lifecycle.value.tcp_socket_port
                     }
                   }
 
