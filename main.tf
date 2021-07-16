@@ -152,14 +152,17 @@ resource "kubernetes_deployment" "deploy_app" {
             }
           }
 
-          resources {
-            requests = {
-              cpu    = lookup(var.resources, "request_cpu", null)
-              memory = lookup(var.resources, "request_memory", null)
-            }
-            limits = {
-              cpu    = lookup(var.resources, "limit_cpu", null)
-              memory = lookup(var.resources, "limit_memory", null)
+          dynamic "resources" {
+            for_each = length(var.resources) == 0 ? [] : [{}]
+            content {
+              requests = {
+                cpu    = lookup(var.resources, "request_cpu", null)
+                memory = lookup(var.resources, "request_memory", null)
+              }
+              limits = {
+                cpu    = lookup(var.resources, "limit_cpu", null)
+                memory = lookup(var.resources, "limit_memory", null)
+              }
             }
           }
 
