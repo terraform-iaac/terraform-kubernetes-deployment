@@ -102,6 +102,17 @@ resource "kubernetes_deployment" "deploy_app" {
           }
         }
 
+        dynamic "volume" {
+          for_each = var.volume_claim
+          content {
+            persistent_volume_claim {
+              claim_name    = lookup(volume.value, "claim_name", null)
+              read_only     = lookup(volume.value, "read_only", null)
+            }
+            name = volume.value.volume_name
+          }
+        }
+
         dynamic "security_context" {
           for_each = var.security_context
           content {

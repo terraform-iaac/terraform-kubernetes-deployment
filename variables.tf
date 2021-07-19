@@ -74,6 +74,10 @@ variable "volume_aws_disk" {
   description = "(Optional) Represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod"
   default     = []
 }
+variable "volume_claim" {
+  description = "(Optional) Represents an Persistent volume Claim resource that is attached to a kubelet's host machine and then exposed to the pod"
+  default     = []
+}
 variable "hosts" {
   type        = list(object({ hostname = list(string), ip = string }))
   description = "(Optional) Add /etc/hosts records to pods"
