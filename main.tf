@@ -243,9 +243,9 @@ resource "kubernetes_deployment" "deploy_app" {
               }
 
               dynamic "tcp_socket" {
-                for_each = lookup(liveness_probe.value, "tcp_socket", null) == null ? [] : [{}]
+                for_each = lookup(liveness_probe.value, "tcp_socket", [])
                 content {
-                  port = liveness_probe.value.tcp_socket_port
+                  port = tcp_socket.value.tcp_socket_port
                 }
               }
 
@@ -289,9 +289,9 @@ resource "kubernetes_deployment" "deploy_app" {
               }
 
               dynamic "tcp_socket" {
-                for_each = lookup(readiness_probe.value, "tcp_socket", null) == null ? [] : [{}]
+                for_each = lookup(readiness_probe.value, "tcp_socket", [])
                 content {
-                  port = readiness_probe.value.tcp_socket_port
+                  port = tcp_socket.value.tcp_socket_port
                 }
               }
 
