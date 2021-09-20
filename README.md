@@ -29,8 +29,8 @@ module "deploy" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.26 |
-| kubernetes | >= 2.0.0 |
+| terraform | >= 0.14.8 |
+| kubernetes | >= 2.1.0 |
 
 ## Inputs
 
