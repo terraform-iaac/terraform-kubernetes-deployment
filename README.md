@@ -22,6 +22,19 @@ module "deploy" {
       internal_port = "8090"
     }
   ]
+  
+  readiness_probe = {
+    http_get = {
+      path   = "/health"
+      port   = 8080
+      scheme = "HTTP"
+    }
+    success_threshold     = 1
+    failure_threshold     = 3
+    initial_delay_seconds = 10
+    period_seconds        = 30
+    timeout_seconds       = 3
+  }
 }
 ```
 
@@ -62,7 +75,9 @@ module "deploy" {
 | volume\_aws\_disk | Represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod | <pre>list(object({<br>    volume_id    = string<br>    fs_type      = string - (Optional)<br>    partition    = string - (Optional)<br>    read_only    = string - (Optional)<br>    volume_name  = string<br>  }))</pre> | n/a | <pre>\[<br>  {<br>    volume_id    = "vol-123124123"<br>    volume_name  = "disk"<br>  }<br>]</pre> | no |
 | volume\_gce\_disk | Represents an GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod | <pre>list(object({<br>    volume_name  = string<br>    fs_type      = string - (Optional)<br>    partition    = string - (Optional)<br>    read_only    = string - (Optional)<br>    gce_disk     = string<br>  }))</pre> | n/a | <pre>\[<br>  {<br>    volume_name  = "google-disk-my"<br>    gce_disk     = "disk"<br>  }<br>]</pre> | no |
 | volume\_claim | Represents an Persistent volume Claim resource that is attached to a kubelet's host machine and then exposed to the pod | <pre>list(object({<br>    volume_name = string<br>    claim_name  = string - (Optional)<br>    read_only   = string - (Optional)<br>}))</pre> | n/a | <pre>\[<br>  {<br>    volume_name = "data-disk"<br>    claim_name  = "claim-name-disk"<br>  }<br>]</pre> | no |
-
+| readiness\_probe | Periodic probe of container service readiness. Container will be removed from service endpoints if the probe fails.  | <pre>object({<br>    success_threshold     = number<br>    failure_threshold     = number<br>    initial_delay_seconds = number <br>    period_seconds        = number <br>    timeout_seconds       = number <br><br>    http_get = {<br>      http_header = list(object(    // (Optional)<br>        {<br>          name =  string<br>          value = string<br>        }<br>      )<br>      path   = string<br>      port   = number<br>      scheme = string<br>    } <br>    exec = {            // (Optional)<br>      command =list(string)<br>    }<br>    tcp_socket = {      // (Optional)<br>      port = number<br>    }<br> })</pre> | n/a | <pre>{<br>    success_threshold     = 1<br>    failure_threshold     = 3<br>    initial_delay_seconds = 10 <br>    period_seconds        = 30 <br>    timeout_seconds       = 10 <br><br>    http_get = {<br>      http_header = [<br>        {<br>          name =  "some-header"<br>          value = "some-value"<br>        }<br>      ]<br>      path   = "/"<br>      port   = 80<br>      scheme = "HTTP"<br>    } <br>    exec = {<br>      command = ["/bin/bash", "command"]<br>    }<br>    tcp_socket = {<br>      port = 5433<br>    }<br> })</pre>  | no |
+| readiness\_probe | Periodic probe of container liveness. Container will be restarted if the probe fails | same as on readiness_probe | n/a | same as on readiness_probe | no |
+| lifecycle\_events | Actions that the management system should take in response to container lifecycle events | <pre>object({<br>    pre_stop = {  // (Optional) <br>      same as on readiness_probe<br>    }    <br><br>    post_start = {  // (Optional) <br>      same as on readiness_probe<br>    }<br>})</pre>  | n/a | <pre>{<br>    pre_stop = {  // (Optional) <br>      same as on readiness_probe<br>    }    <br><br>    post_start = {  // (Optional) <br>      same as on readiness_probe<br>    }<br>}</pre>   | no |
 ## Outputs
 | Name | Description |
 |------|:-----------:|

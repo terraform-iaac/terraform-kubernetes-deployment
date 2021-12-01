@@ -48,4 +48,26 @@ module "deploy" {
       volume_name = var.volume_config
     }
   ]
+  readiness_probe = {
+    http_get = {
+      path   = "/healthcheck"
+      port   = 80
+      scheme = "HTTP"
+      http_header = [
+        {
+          name  = "test"
+          value = "test"
+        },
+        {
+          name  = "tes"
+          value = "asd"
+        }
+      ]
+    }
+    success_threshold     = 1
+    failure_threshold     = 3
+    initial_delay_seconds = 10
+    period_seconds        = 30
+    timeout_seconds       = 3
+  }
 }
