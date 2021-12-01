@@ -170,3 +170,8 @@ variable "rolling_update" {
 variable "wait_for_rollout" {
   default = true
 }
+variable "prevent_deploy_on_the_same_node" {
+  description = "Pod pod_anti_affinity rule, which prevents deploy same pod on one node."
+  type        = bool
+  default     = false
+}
