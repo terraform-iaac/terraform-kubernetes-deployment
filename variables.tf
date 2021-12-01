@@ -78,6 +78,10 @@ variable "volume_claim" {
   description = "(Optional) Represents an Persistent volume Claim resource that is attached to a kubelet's host machine and then exposed to the pod"
   default     = []
 }
+variable "toleration" {
+  description = "(Optional) Pod node tolerations"
+  default = []
+}
 variable "hosts" {
   type        = list(object({ hostname = list(string), ip = string }))
   description = "(Optional) Add /etc/hosts records to pods"

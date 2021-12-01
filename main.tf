@@ -34,6 +34,17 @@ resource "kubernetes_deployment" "deploy_app" {
 
         node_selector = var.node_selector
 
+        dynamic "toleration" {
+          for_each = var.toleration
+          content {
+            effect             = lookup(toleration.value, "effect", null)
+            key                = lookup(toleration.value, "key", null)
+            operator           = lookup(toleration.value, "operator", null)
+            toleration_seconds = lookup(toleration.value, "toleration_seconds", null)
+            value              = lookup(toleration.value, "value", null)
+          }
+        }
+
         dynamic "host_aliases" {
           iterator = hosts
           for_each = var.hosts
