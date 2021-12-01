@@ -42,7 +42,7 @@ resource "kubernetes_deployment" "deploy_app" {
         node_selector = var.node_selector
 
         dynamic "affinity" {
-          for_each = var.prevent_deploy_on_the_same_node ? [{}] : {}
+          for_each = var.prevent_deploy_on_the_same_node ? [{}] : []
           content {
             affinity {
               pod_anti_affinity {
