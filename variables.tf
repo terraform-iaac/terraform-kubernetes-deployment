@@ -66,8 +66,16 @@ variable "volume_config_map" {
   description = "(Optional) The data stored in a ConfigMap object can be referenced in a volume of type configMap and then consumed by containerized applications running in a Pod"
   default     = []
 }
+variable "volume_empty_dir" {
+  type    = list(object({ volume_name = string }))
+  default = []
+}
 variable "volume_gce_disk" {
   description = "(Optional) Represents an GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod"
+  default     = []
+}
+variable "volume_secret" {
+  description = "(Optional) Create volume from secret"
   default     = []
 }
 variable "volume_aws_disk" {
