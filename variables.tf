@@ -165,7 +165,6 @@ variable "strategy_update" {
 }
 variable "rolling_update" {
   description = "Rolling update config params. Present only if strategy_update = RollingUpdate"
-  type        = object({ max_surge = string, max_unavailable = string })
   default     = []
 }
 variable "wait_for_rollout" {
