@@ -44,14 +44,12 @@ resource "kubernetes_deployment" "deploy_app" {
         dynamic "affinity" {
           for_each = var.prevent_deploy_on_the_same_node ? [{}] : []
           content {
-            affinity {
-              pod_anti_affinity {
-                required_during_scheduling_ignored_during_execution {
-                  label_selector {
-                    match_labels = local.labels
-                  }
-                  topology_key = "kubernetes.io/hostname"
+            pod_anti_affinity {
+              required_during_scheduling_ignored_during_execution {
+                label_selector {
+                  match_labels = local.labels
                 }
+                topology_key = "kubernetes.io/hostname"
               }
             }
           }
