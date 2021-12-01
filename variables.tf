@@ -88,7 +88,7 @@ variable "volume_claim" {
 }
 variable "toleration" {
   description = "(Optional) Pod node tolerations"
-  default = []
+  default     = []
 }
 variable "hosts" {
   type        = list(object({ hostname = list(string), ip = string }))
@@ -162,6 +162,11 @@ variable "security_context_capabilities" {
 variable "strategy_update" {
   description = "(Optional) Type of deployment. Can be 'Recreate' or 'RollingUpdate'"
   default     = "RollingUpdate"
+}
+variable "rolling_update" {
+  description = "Rolling update config params. Present only if strategy_update = RollingUpdate"
+  type        = object({ max_surge = string, max_unavailable = string })
+  default     = []
 }
 variable "wait_for_rollout" {
   default = true

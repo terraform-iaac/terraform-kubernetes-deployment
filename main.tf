@@ -13,6 +13,13 @@ resource "kubernetes_deployment" "deploy_app" {
 
     strategy {
       type = var.strategy_update
+      dynamic "rolling_update" {
+        for_each = flatten([var.rolling_update])
+        content {
+          max_surge       = lookup(rolling_update.value, "max_surge", "25%")
+          max_unavailable = lookup(rolling_update.value, "max_unavailable", "25%")
+        }
+      }
     }
 
     selector {
