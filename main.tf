@@ -55,6 +55,14 @@ resource "kubernetes_deployment" "deploy_app" {
         }
 
         dynamic "volume" {
+          for_each = var.volume_empty_dir
+          content {
+            empty_dir {}
+            name = volume.value.volume_name
+          }
+        }
+
+        dynamic "volume" {
           for_each = var.volume_nfs
           content {
             nfs {
@@ -101,6 +109,26 @@ resource "kubernetes_deployment" "deploy_app" {
         }
 
         dynamic "volume" {
+          for_each = var.volume_secret
+          content {
+            secret {
+              secret_name  = volume.value.secret_name
+              default_mode = lookup(volume.value, "default_mode", null)
+              optional     = lookup(volume.value, "optional", null)
+              dynamic "items" {
+                for_each = lookup(volume.value, "items", [])
+                content {
+                  key  = items.value.key
+                  path = items.value.path
+                  mode = lookup(items.value, "mode", null)
+                }
+              }
+            }
+            name = volume.value.volume_name
+          }
+        }
+
+        dynamic "volume" {
           for_each = var.volume_aws_disk
           content {
             aws_elastic_block_store {
@@ -140,6 +168,25 @@ resource "kubernetes_deployment" "deploy_app" {
           image_pull_policy = var.image_pull_policy
           args              = var.args
           command           = var.command
+
+          dynamic "security_context" {
+            for_each = var.security_context
+            content {
+              allow_privilege_escalation = lookup(security_context.value, "allow_privilege_escalation", false)
+              privileged                 = lookup(security_context.value, "privileged", false)
+              read_only_root_filesystem  = lookup(security_context.value, "read_only_root_filesystem", false)
+            }
+          }
+          dynamic "security_context" {
+            for_each = flatten([var.security_context_capabilities])
+            content {
+              allow_privilege_escalation = false
+              capabilities {
+                add  = lookup(security_context.value, "add", [])
+                drop = lookup(security_context.value, "drop", [])
+              }
+            }
+          }
 
           dynamic "env" {
             for_each = var.env
@@ -204,17 +251,6 @@ resource "kubernetes_deployment" "deploy_app" {
               sub_path   = lookup(volume_mount.value, "sub_path", null)
               name       = volume_mount.value.volume_name
               read_only  = lookup(volume_mount.value, "read_only", false)
-            }
-          }
-
-          dynamic "security_context" {
-            for_each = flatten([var.security_context_capabilities])
-            content {
-              allow_privilege_escalation = false
-              capabilities {
-                add  = lookup(security_context.value, "add", [])
-                drop = lookup(security_context.value, "drop", [])
-              }
             }
           }
 
