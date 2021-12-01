@@ -57,8 +57,9 @@ module "deploy" {
 | args | Arguments to the entrypoint | `list(string)` | n/a | `["--dev", "--nodaemon"]` | no |
 | command | Change entrypoint array | `list(string)` | n/a | `["/bin/bash", "-c", "pwd"]` | no |
 | min\_ready\_seconds | Field that specifies the minimum number of seconds for which a newly created Pod should be ready without any of its containers crashing, for it to be considered available | `number` | `null` | `2` | no |
-| replicas  | Count of pods | `number` | `1` | `5` | yes |
-| strategy\_update  | Type of deployment. Can be 'Recreate' or 'RollingUpdate' | `string` | `RollingUpdate` | `Recreate` | yes |
+| replicas  | Count of pods | `number` | `1` | `5` | no |
+| strategy\_update  | Type of deployment. Can be 'Recreate' or 'RollingUpdate' | `string` | `RollingUpdate` | `Recreate` | no |
+| rolling\_update  | Rolling update config params. Present only if strategy_update = RollingUpdate | `object({ max_surge = string, max_unavailable = string })` | n/a | <pre>{<br>  max_surge       = "25%"<br>  max_unavailable = "25%"<br>}</pre> | no |
 | service_account\_name | Is the name of the ServiceAccount to use to run this pod | `string` | `null` | `application-sa` | no |
 | service_accoun_token | Indicates whether a service account token should be automatically mounted | `bool` | `null` | `true` | no |
 | restart\_policy | Restart policy for all containers within the pod. One of Always, OnFailure, Never | `string` | `Always` | `OnFailure` | no |
