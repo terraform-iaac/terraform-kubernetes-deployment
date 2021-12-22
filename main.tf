@@ -191,11 +191,11 @@ resource "kubernetes_deployment" "deploy_app" {
           command           = var.command
 
           dynamic "security_context" {
-            for_each = var.security_context
+            for_each = flatten([var.security_context_container])
             content {
-              allow_privilege_escalation = lookup(security_context.value, "allow_privilege_escalation", false)
-              privileged                 = lookup(security_context.value, "privileged", false)
-              read_only_root_filesystem  = lookup(security_context.value, "read_only_root_filesystem", false)
+              allow_privilege_escalation = lookup(security_context.value, "allow_privilege_escalation", null)
+              privileged                 = lookup(security_context.value, "privileged", null)
+              read_only_root_filesystem  = lookup(security_context.value, "read_only_root_filesystem", null)
             }
           }
           dynamic "security_context" {
