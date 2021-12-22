@@ -96,7 +96,15 @@ variable "hosts" {
   default     = []
 }
 variable "security_context" {
-  description = "(Optional) Set startup user_id, when pods start"
+  description = "(Optional) SecurityContext holds pod-level security attributes and common container settings"
+  default     = []
+}
+variable "security_context_capabilities" {
+  description = "(Optional) Security context in pod. Only capabilities."
+  default     = []
+}
+variable "security_context_container" {
+  description = "(Optional) Security context in pod."
   default     = []
 }
 variable "custom_labels" {
@@ -154,10 +162,6 @@ variable "node_selector" {
   description = "(Optional) Specify node selector for pod"
   type        = map(string)
   default     = null
-}
-variable "security_context_capabilities" {
-  description = "(Optional) Security context in pod. Only capabilities."
-  default     = []
 }
 variable "strategy_update" {
   description = "(Optional) Type of deployment. Can be 'Recreate' or 'RollingUpdate'"
