@@ -26,19 +26,18 @@ variable "command" {
   default     = []
 }
 variable "env" {
-  type        = list(object({ name = string, value = string }))
+  type        = map(string)
   description = "(Optional) Name and value pairs to set in the container's environment"
-  default     = []
+  default     = {}
 }
 variable "env_field" {
-  type        = list(object({ name = string, field_path = string }))
+  type        = map(string)
   description = "(Optional) Get field from k8s and add as environment variables to pods"
-  default     = []
+  default     = {}
 }
 variable "env_secret" {
   description = "(Optional) Get secret keys from k8s and add as environment variables to pods"
-  type        = list(object({ name = string, secret_name = string, secret_key = string }))
-  default     = []
+  default     = {}
 }
 variable "resources" {
   description = "(Optional) Compute Resources required by this container. CPU/RAM requests/limits"

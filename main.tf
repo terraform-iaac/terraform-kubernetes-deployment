@@ -210,7 +210,7 @@ resource "kubernetes_deployment" "deploy_app" {
           }
 
           dynamic "env" {
-            for_each = var.env
+            for_each = local.env
             content {
               name  = env.value.name
               value = env.value.value
@@ -218,7 +218,7 @@ resource "kubernetes_deployment" "deploy_app" {
           }
 
           dynamic "env" {
-            for_each = var.env_field
+            for_each = local.env_field
             content {
               name = env.value.name
               value_from {
@@ -230,7 +230,7 @@ resource "kubernetes_deployment" "deploy_app" {
           }
 
           dynamic "env" {
-            for_each = var.env_secret
+            for_each = local.env_secret
             content {
               name = env.value.name
               value_from {
