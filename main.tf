@@ -2,9 +2,10 @@ resource "kubernetes_deployment" "deploy_app" {
   wait_for_rollout = var.wait_for_rollout
 
   metadata {
-    name      = var.name
-    namespace = var.namespace
-    labels    = local.labels
+    name        = var.name
+    namespace   = var.namespace
+    labels      = local.labels
+    annotations = var.deployment_annotations
   }
 
   spec {
@@ -28,7 +29,8 @@ resource "kubernetes_deployment" "deploy_app" {
 
     template {
       metadata {
-        labels = local.labels
+        labels      = local.labels
+        annotations = var.template_annotations
       }
 
       spec {
