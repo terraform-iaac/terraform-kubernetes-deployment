@@ -168,6 +168,11 @@ variable "lifecycle_events" {
   description = "(Optional) Actions that the management system should take in response to container lifecycle events"
   default     = []
 }
+variable "image_pull_secrets" {
+  description = "(Optional) Specify list of pull secrets"
+  type        = map(string)
+  default     = null
+}
 variable "node_selector" {
   description = "(Optional) Specify node selector for pod"
   type        = map(string)
