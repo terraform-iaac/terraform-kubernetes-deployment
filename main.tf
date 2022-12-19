@@ -40,6 +40,13 @@ resource "kubernetes_deployment" "deploy_app" {
         automount_service_account_token = var.service_account_token
 
         restart_policy = var.restart_policy
+        
+        dynamic "image_pull_secrets" {
+          for_each = var.image_pull_secrets
+          content {
+            name = image_pull_secrets.value
+          }
+        }
 
         node_selector = var.node_selector
 
