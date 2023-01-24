@@ -170,7 +170,8 @@ variable "lifecycle_events" {
 }
 variable "image_pull_secrets" {
   description = "(Optional) Specify list of pull secrets"
-  default     = []
+  type        = map(string)
+  default     = {}
 }
 variable "node_selector" {
   description = "(Optional) Specify node selector for pod"
