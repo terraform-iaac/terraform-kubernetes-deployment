@@ -123,6 +123,15 @@ resource "kubernetes_deployment" "deploy_app" {
             config_map {
               default_mode = volume.value.mode
               name         = volume.value.name
+              optional     = lookup(volume.value, "optional", null)
+              dynamic "items" {
+                for_each = lookup(volume.value, "items", [])
+                content {
+                  key  = items.value.key
+                  path = items.value.path
+                  mode = lookup(items.value, "mode", null)
+                }
+              }
             }
             name = volume.value.volume_name
           }
@@ -208,15 +217,12 @@ resource "kubernetes_deployment" "deploy_app" {
               allow_privilege_escalation = lookup(security_context.value, "allow_privilege_escalation", null)
               privileged                 = lookup(security_context.value, "privileged", null)
               read_only_root_filesystem  = lookup(security_context.value, "read_only_root_filesystem", null)
-            }
-          }
-          dynamic "security_context" {
-            for_each = flatten([var.security_context_capabilities])
-            content {
-              allow_privilege_escalation = false
-              capabilities {
-                add  = lookup(security_context.value, "add", [])
-                drop = lookup(security_context.value, "drop", [])
+              dynamic "capabilities" {
+                for_each = length(security_context.value.capabilities) != 0 ? [security_context.value.capabilities] : []
+                content {
+                  add  = lookup(capabilities.value, "add", [])
+                  drop = lookup(capabilities.value, "drop", [])
+                }
               }
             }
           }
