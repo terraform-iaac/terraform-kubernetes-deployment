@@ -1,4 +1,3 @@
-{{REWRITTEN_CODE}}
 Terraform module for Kubernetes Deployment
 ==========================================
 
@@ -89,4 +88,3 @@ module "deploy" {
 |------|:-----------:|
 | name | Name of the deployment |
 | namespace | Namespace in which created the deployment |
-```
