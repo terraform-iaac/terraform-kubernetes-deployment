@@ -13,7 +13,7 @@ variable "image" {
 variable "ports" {
   default = [
     {
-      name = "web-access"
+      name          = "web-access"
       internal_port = "8080"
     }
   ]
