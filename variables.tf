@@ -50,8 +50,16 @@ variable "env_secret" {
   description = "(Optional) Get secret keys from k8s and add as environment variables to pods"
   default     = {}
 }
+variable "env_from" {
+  description = "(Optional) Get Env Variables from ConfigMap and add as environment variables to pods"
+  default     = []
+  type = list(object({
+    config_map_ref = optional(object({ name = string }))
+    secret_ref     = optional(object({ name = string }))
+  }))
+}
 variable "resources" {
-/*  type = object({
+  /*  type = object({
     request_cpu    = optional(string)
     request_memory = optional(string)
     limit_cpu      = optional(string)
@@ -107,7 +115,7 @@ variable "volume_config_map" {
       key  = string
       path = string
       mode = optional(string)
-    })),[])
+    })), [])
   }))
   description = "(Optional) The data stored in a ConfigMap object can be referenced in a volume of type configMap and then consumed by containerized applications running in a Pod"
   default     = []
@@ -142,7 +150,7 @@ variable "volume_secret" {
       key  = string
       path = string
       mode = optional(string)
-    })),[])
+    })), [])
   }))
   description = "(Optional) Create volume from secret"
   default     = []
@@ -187,7 +195,7 @@ variable "hosts" {
   default     = []
 }
 variable "security_context" {
-/*  type = object({
+  /*  type = object({
     fs_group        = optional(string)
     run_as_group    = optional(string)
     run_as_user     = optional(string)
@@ -197,7 +205,7 @@ variable "security_context" {
   default     = []
 }
 variable "security_context_container" {
-/*  type = object({
+  /*  type = object({
     allow_privilege_escalation = optional(string)
     privileged                 = optional(string)
     read_only_root_filesystem  = optional(string)
@@ -251,7 +259,7 @@ variable "min_ready_seconds" {
   default     = null
 }
 variable "liveness_probe" {
-/*  type = object({
+  /*  type = object({
     initial_delay_seconds = optional(string)
     period_seconds        = optional(string)
     timeout_seconds       = optional(string)
@@ -278,7 +286,7 @@ variable "liveness_probe" {
   default     = []
 }
 variable "readiness_probe" {
-/*  type = object({
+  /*  type = object({
     initial_delay_seconds = optional(string)
     period_seconds        = optional(string)
     timeout_seconds       = optional(string)
@@ -305,7 +313,7 @@ variable "readiness_probe" {
   default     = []
 }
 variable "lifecycle_events" {
-/*  type = object({
+  /*  type = object({
     pre_stop = optional(object({
       initial_delay_seconds = optional(string)
       period_seconds        = optional(string)
@@ -372,7 +380,7 @@ variable "strategy_update" {
   default     = "RollingUpdate"
 }
 variable "rolling_update" {
-/*  type = object({
+  /*  type = object({
     max_surge       = optional(string)
     max_unavailable = optional(string)
   })*/

@@ -40,7 +40,7 @@ resource "kubernetes_deployment" "deploy_app" {
         automount_service_account_token = var.service_account_token
 
         restart_policy = var.restart_policy
-        
+
         dynamic "image_pull_secrets" {
           for_each = var.image_pull_secrets
           content {
@@ -270,6 +270,20 @@ resource "kubernetes_deployment" "deploy_app" {
               limits = {
                 cpu    = lookup(var.resources, "limit_cpu", null)
                 memory = lookup(var.resources, "limit_memory", null)
+              }
+            }
+          }
+
+          dynamic "env_from" {
+            for_each = var.env_from
+            content {
+              dynamic "config_map_ref" {
+                for_each = env_from.value.config_map_ref != null ? [env_from.value.config_map_ref] : []
+                content { name = config_map_ref.value.name }
+              }
+              dynamic "secret_ref" {
+                for_each = env_from.value.secret_ref != null ? [env_from.value.secret_ref] : []
+                content { name = secret_ref.value.name }
               }
             }
           }
