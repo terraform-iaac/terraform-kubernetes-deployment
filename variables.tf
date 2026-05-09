@@ -397,3 +397,7 @@ variable "prevent_deploy_on_the_same_node" {
   type        = bool
   default     = false
 }
+variable "dns_config" {
+  description = "(Optional) Specifies the DNS parameters of a pod. Parameters specified here will be merged to the generated DNS configuration based on DNSPolicy."
+  default     = {}
+}

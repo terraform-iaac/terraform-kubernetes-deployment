@@ -84,6 +84,22 @@ resource "kubernetes_deployment" "deploy_app" {
           }
         }
 
+        dynamic "dns_config" {
+          for_each = length(var.dns_config) == 0 ? [] : [var.dns_config]
+          content {
+            nameservers = lookup(dns_config.value, "nameservers", null)
+            searches    = lookup(dns_config.value, "searches", null)
+
+            dynamic "option" {
+              for_each = lookup(dns_config.value, "option", [])
+              content {
+                name  = option.value.name
+                value = lookup(option.value, "value", null)
+              }
+            }
+          }
+        }
+
         dynamic "volume" {
           for_each = var.volume_empty_dir
           content {
